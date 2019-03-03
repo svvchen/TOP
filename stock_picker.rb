@@ -31,3 +31,8 @@ def picker(stock_prices)
 
   return "To make $#{margin}, buy on day #{buy_day} and sell on day #{sell_day}!"
 end
+
+# in order to test:
+# 1. Run irb.
+# 2. Require './stock_picker.rb'.
+# 3. Run picker([your array])!
