@@ -1,1 +1,1 @@
-# Projects from The Odin Project
+# The Odin Project ... Projects
