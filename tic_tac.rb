@@ -1,6 +1,6 @@
-# This is some bad coding where I repeat a ton of stuff
-# Plan on fixing soon
+# The game board
 class Board
+  # create the board, make it accessible the world, and display it
   def initialize
     @board = [[" ", " ", " "], [" ", " ", " "], [" ", " ", " "]]
   end
@@ -21,7 +21,7 @@ class Player
     @name = name
   end
   def get_name
-  @name
+    @name
   end
   def get_move
     print "x-position: "
@@ -32,13 +32,11 @@ class Player
   end
 end
 
-
 class Player1 < Player
   def make_x_move(current_board)
     indicator = true
     while indicator
       tile1, tile2 = get_move
-      puts "this is it:", current_board.board[tile2][tile1].match?(/\w/)
       if tile1.between?(0, 2) && tile2.between?(0, 2) && !(current_board.board[tile2][tile1].match?(/\w/))
         current_board.board[tile2][tile1] = "X"
         indicator = false
@@ -65,7 +63,6 @@ class Player2 < Player
   end
 end
 
-
 class GameEngine
   def initialize(current_board)
     puts "Player 1, please enter your name:"
@@ -76,48 +73,44 @@ class GameEngine
     name2 = gets.chomp
     player2 = Player2.new(name2)
 
-    def check_win(current_board)
+    def check_win(current_board, one_player, two_player)
       i = 0
       validator = false
       transposed_board = current_board.board.transpose
 
       3.times do |i|
-        if current_board.board[i].all? { |xy| xy == "X" }
-          puts "Player 1, you've won!"
+        if current_board.board[i].all? { |xy| xy == "X" } || current_board.board[i].all? { |xy| xy == "O" }
           validator = true
-          break
-        elsif transposed_board[i].all? { |xy| xy == "X" }
-          puts "Player 1, you've won!"
+          if current_board.board[i].all? { |xy| xy == "X" }
+            puts "#{one_player.get_name}, you've won!"
+            break
+          else
+            puts "#{two_player.get_name}, you've won!"
+            break
+          end
+        elsif transposed_board[i].all? { |xy| xy == "X" } || transposed_board[i].all? { |xy| xy == "O" }
           validator = true
-          break
+          if transposed_board[i].all? { |xy| xy == "X" }
+            puts "#{one_player.get_name}, you've won!"
+            break
+          else
+            puts "#{two_player.get_name}, you've won!"
+            break
+          end
         elsif current_board.board[0][0] == "X" && current_board.board[1][1] == "X" && current_board.board[2][2] == "X"
-          puts "Player 1, you've won!"
+          puts "#{one_player.get_name}, you've won!"
           validator = true
           break
         elsif current_board.board[0][2] == "X" && current_board.board[1][1] == "X" && current_board.board[2][0] == "X"
-          puts "Player 1, you've won!"
-          validator = true
-          break
-        else
-          i += 1
-        end
-      end
-
-      3.times do |i|
-        if current_board.board[i].all? { |xy| xy == "O" }
-          puts "Player 2, you've won!"
-          validator = true
-          break
-        elsif transposed_board[i].all? { |xy| xy == "O" }
-          puts "Player 2, you've won!"
+          puts "#{one_player.get_name}, you've won!"
           validator = true
           break
         elsif current_board.board[0][0] == "O" && current_board.board[1][1] == "O" && current_board.board[2][2] == "O"
-          puts "Player 2, you've won!"
+          puts "#{two_player.get_name}, you've won!"
           validator = true
           break
         elsif current_board.board[0][2] == "O" && current_board.board[1][1] == "O" && current_board.board[2][0] == "O"
-          puts "Player 2, you've won!"
+          puts "#{two_player.get_name}, you've won!"
           validator = true
           break
         else
@@ -130,15 +123,15 @@ class GameEngine
     tac_array = Array(2..10)
 
     tac_array.each do |i|
-      if check_win(current_board) == true
+      if check_win(current_board, player1, player2) == true
         break
       end
 
       if i % 2 == 0
-        puts "\n#{player1.get_name}, make your move."
+        puts "#{player1.get_name}, make your move."
         player1.make_x_move(current_board)
       else
-        puts "\n#{player2.get_name}, make your move."
+        puts "#{player2.get_name}, make your move."
         player2.make_o_move(current_board)
       end
 
