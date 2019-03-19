@@ -1,6 +1,5 @@
 The Odin Project Projects (TOPP...?)
-
-## Projects:
+## Projects
 - Basic Substring picker
 - Pokemon Battle Game (WIP)
 - Tic Tac Toe
