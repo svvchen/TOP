@@ -11,13 +11,14 @@ class Pokemon
   # pokemon can take damage, faint, or deal damage
 
   def faint
-    puts self.health
-    puts "#{self.name} has fainted."
     self.fainted = true
   end
 
   def take_damage(damage)
     @health = @health - damage
+    if @health < 1
+      @health = 0
+    end
     faint if @health < 1
   end
 
@@ -127,17 +128,14 @@ class Game_Engine
 
     if rng_pokemon_number == 1
       rng_pokemon = Grass_Pokemon.new("Bulbasaur")
-      puts "Your rival picked: Bulbasaur!"
+      puts "\nYour rival picked: Bulbasaur!"
     elsif rng_pokemon_number == 2
       rng_pokemon = Fire_Pokemon.new("Charmander")
-      puts "Your rival picked: Charmander!"
+      puts "\nYour rival picked: Charmander!"
     elsif rng_pokemon_number == 3
       rng_pokemon = Water_Pokemon.new("Squirtle")
-      puts "Your rival picked: Squirtle!"
+      puts "\nYour rival picked: Squirtle!"
     end
-
-    puts rng_pokemon.health
-    puts player_pokemon.health
 
     # defining two move making functions
 
@@ -155,7 +153,7 @@ class Game_Engine
         rngp.water_gun(pp)
         puts "\n#{rngp.name} used Water Gun!"
       end
-      puts "\n#{pp.name}\'s health is now #{pp.health}!"
+      puts "#{pp.name}\'s health is now #{pp.health}!"
     end
 
     def player_move(pp, rngp, ppn)
@@ -166,29 +164,51 @@ class Game_Engine
       if move_number == "1"
         pp.tackle(rngp)
         puts "\n#{pp.name} used Tackle!"
-      elsif move_number == 2 && ppn == 1
+      elsif move_number == "2" && ppn == 1
         pp.vine_whip(rngp)
         puts "\n#{pp.name} used Vine Whip!"
-      elsif move_number == 2 && ppn == 2
-        rngp.fire_spin(rngp)
+      elsif move_number == "2" && ppn == 2
+        pp.fire_spin(rngp)
         puts "\n#{pp.name} used Fire Spin!"
-      elsif move_number == 2 && ppn == 3
+      elsif move_number == "2" && ppn == 3
         pp.water_gun(rngp)
         puts "\n#{pp.name} used Water Gun!"
       else
-        puts "Sorry, not a valid move!"
+        puts "Sorry, not a valid move; tackling instead!"
+        pp.tackle(rngp)
+        puts "\n#{pp.name} used Tackle!"
       end
-      puts "\n#{rngp.name}\'s health is now #{rngp.health}!"
+      puts "#{rngp.name}\'s health is now #{rngp.health}!"
     end
 
     # core battle loop
     while !(rng_pokemon.health < 1 || player_pokemon.health < 1)
       if rng_pokemon.speed > player_pokemon.speed
         npc_move(npc, player_pokemon, rng_pokemon, rng_pokemon_number)
+        if player_pokemon.fainted
+          puts "\n#{player_pokemon.name} fainted!\n"
+          puts "You lost."
+          break
+        end
         player_move(player_pokemon, rng_pokemon, player_pick_number)
+        if rng_pokemon.fainted
+          puts "\n#{rng_pokemon.name} fainted!\n"
+          puts "You won!"
+          break
+        end
       else
         player_move(player_pokemon, rng_pokemon, player_pick_number)
+        if rng_pokemon.fainted
+          puts "\n#{rng_pokemon.name} fainted!\n"
+          puts "You won!\n"
+          break
+        end
         npc_move(npc, player_pokemon, rng_pokemon, rng_pokemon_number)
+        if player_pokemon.fainted
+          puts "\n#{player_pokemon.name} fainted!\n"
+          puts "You have lost.\n"
+          break
+        end
       end
     end
   end
